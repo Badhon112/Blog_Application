@@ -24,9 +24,11 @@ const userSchema = new mongoose.Schema({
   avater: {
     public_id: {
       type: String,
+      require:true
     },
     url: {
       type: String,
+      require:true
     },
   },
   education: {
