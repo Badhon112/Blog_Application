@@ -1,1 +1,3 @@
 npm i bcrypt cloudinary cookie-parser cors dotenv express express-fileupload jsonwebtoken mongoose validator
+
+npm i axios chart.js react-chartjs02 react-hot-toast react-icons react-multi-carousel react-router-dom react-spinners
