@@ -1,5 +1,12 @@
 import express from "express";
-import { blogPost, deleteBlog } from "../controllers/blogController.js";
+import {
+  blogPost,
+  deleteBlog,
+  getAllBlogs,
+  getMyBlogs,
+  getSingleBlog,
+  uploadBlog,
+} from "../controllers/blogController.js";
 import { isAuthorized, isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -11,5 +18,9 @@ router.delete(
   isAuthorized("Author"),
   deleteBlog
 );
+router.get("/all", getAllBlogs);
+router.get("/singleBlog/:id", isAuthenticated, getSingleBlog);
+router.get("/myblogs", isAuthenticated,isAuthorized("Author"), getMyBlogs);
+router.put("/update/:id", isAuthenticated,isAuthorized("Author"), uploadBlog);
 
 export default router;

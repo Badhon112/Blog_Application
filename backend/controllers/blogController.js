@@ -13,7 +13,7 @@ export const blogPost = catchAsyncErrors(async (req, res, next) => {
   }
   const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
   if (
-    !allowedFormats.includes(mainImage.mimetype) ||
+    (mainImage && !allowedFormats.includes(mainImage.mimetype)) ||
     (paraOneImage && !allowedFormats.includes(paraOneImage.mimetype)) ||
     (paraTwoImage && !allowedFormats.includes(paraTwoImage.mimetype)) ||
     (paraThreeImage && !allowedFormats.includes(paraThreeImage.mimetype))
@@ -30,6 +30,7 @@ export const blogPost = catchAsyncErrors(async (req, res, next) => {
     paraThreeDescription,
     paraThreeTitle,
     category,
+    published,
   } = req.body;
 
   const createdBy = req.user._id;
@@ -83,6 +84,7 @@ export const blogPost = catchAsyncErrors(async (req, res, next) => {
       public_id: mainImageRes.public_id,
       url: mainImageRes.secure_url,
     },
+    published,
   };
   if (paraOneImageRes) {
     blogData.paraOneImage = {
@@ -120,6 +122,146 @@ export const deleteBlog = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Blog Deleted!",
+    blog,
+  });
+});
+
+export const getAllBlogs = catchAsyncErrors(async (req, res, next) => {
+  const allBlogs = await Blog.find({ published: true });
+  if (!allBlogs) {
+    return next(new ErrorHandler("Blog not found!", 400));
+  }
+  res.status(200).json({
+    success: true,
+    message: "All Blog",
+    allBlogs,
+  });
+});
+
+export const getSingleBlog = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params;
+  const blog = await Blog.findById(id);
+  if (!blog) {
+    return next(new ErrorHandler("Blog not found!", 404));
+  }
+  res.status(200).json({
+    success: true,
+    blog,
+  });
+});
+
+export const getMyBlogs = catchAsyncErrors(async (req, res, next) => {
+  const createdBy = req.user._id;
+  const myblogs = await Blog.find({ createdBy });
+  if (!myblogs) {
+    return next(new ErrorHandler("Blog not found!", 404));
+  }
+  res.status(200).json({
+    success: true,
+    myblogs,
+  });
+});
+
+export const uploadBlog = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params;
+  let blog = await Blog.findById(id);
+  if (!blog) {
+    return next(new ErrorHandler("Blog not found!", 404));
+  }
+  const {
+    title,
+    intro,
+    category,
+    paraOneTitle,
+    paraOneDescription,
+    paraTwoTitle,
+    paraTwoDescription,
+    paraThreeTitle,
+    paraThreeDescription,
+    published,
+  } = req.body;
+  const newBlogData = {
+    title,
+    intro,
+    category,
+    paraOneTitle,
+    paraOneDescription,
+    paraTwoTitle,
+    paraTwoDescription,
+    paraThreeTitle,
+    paraThreeDescription,
+    published,
+  };
+  if (req.files) {
+    const { mainImage, paraOneImage, paraTwoImage, paraThreeImage } = req.files;
+    const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
+    if (
+      (mainImage && !allowedFormats.includes(mainImage.mimetype)) ||
+      (paraOneImage && !allowedFormats.includes(paraOneImage.mimetype)) ||
+      (paraTwoImage && !allowedFormats.includes(paraTwoImage.mimetype)) ||
+      (paraThreeImage && !allowedFormats.includes(paraThreeImage.mimetype))
+    ) {
+      return next(new ErrorHandler("Invalid file type", 400));
+    }
+    if (req.files && mainImage) {
+      const blogMainImaged = blog.mainImage.public_id;
+      await cloudinary.uploader.destroy(blogMainImaged);
+      const newBlogMainImage = await cloudinary.uploader.upload(
+        mainImage.tempFilePath
+      );
+      newBlogData.mainImage = {
+        public_id: newBlogMainImage.public_id,
+        url: newBlogMainImage.secure_url,
+      };
+    }
+    if (req.files && paraOneImage) {
+      if (blog.paraOneImage) {
+        const blogparaOneImage = blog.paraOneImage.public_id;
+        await cloudinary.uploader.destroy(blogparaOneImage);
+      }
+      const newBlogparaOneImage = await cloudinary.uploader.upload(
+        paraOneImage.tempFilePath
+      );
+      newBlogData.paraOneImage = {
+        public_id: newBlogparaOneImage.public_id,
+        url: newBlogparaOneImage.secure_url,
+      };
+    }
+    if (req.files && paraTwoImage) {
+      if (blog.paraTwoImage) {
+        const blogparaTwoImage = blog.paraTwoImage.public_id;
+        await cloudinary.uploader.destroy(blogparaTwoImage);
+      }
+      const newBlogparaTwoImage = await cloudinary.uploader.upload(
+        paraTwoImage.tempFilePath
+      );
+      newBlogData.paraTwoImage = {
+        public_id: newBlogparaTwoImage.public_id,
+        url: newBlogparaTwoImage.secure_url,
+      };
+    }
+    if (req.files && paraThreeImage) {
+      if (blog.paraThreeImage) {
+        const blogparaThreeImage = blog.paraThreeImage.public_id;
+        await cloudinary.uploader.destroy(blogparaThreeImage);
+      }
+      const newBlogparaThreeImage = await cloudinary.uploader.upload(
+        paraThreeImage.tempFilePath
+      );
+      newBlogData.paraThreeImage = {
+        public_id: newBlogparaThreeImage.public_id,
+        url: newBlogparaThreeImage.secure_url,
+      };
+    }
+  }
+  blog = await Blog.findByIdAndUpdate(id, newBlogData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+  res.status(200).json({
+    success: true,
+    message: "Blog Updated!",
     blog
   });
 });
