@@ -8,7 +8,7 @@ import cloudinary from "cloudinary";
 export const register = catchAsyncErrors(async (req, res, next) => {
 
   if (!req.files || Object.keys(req.files).length === 0) {
-    return next(new ErrorHandler("User Avater Required !", 400));
+    return next(new ErrorHandler("User avatar Required !", 400));
   }
   const { avatar } = req.files;
   const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
@@ -56,7 +56,7 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     phone,
     role,
     education,
-    avater: {
+    avatar: {
       public_id: cloudinaryResponse.public_id,
       url: cloudinaryResponse.secure_url,
     },
