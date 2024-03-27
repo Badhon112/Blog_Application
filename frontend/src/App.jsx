@@ -15,6 +15,7 @@ import Footer from "./components/layout/Footer";
 import { useContext } from "react";
 import { Context } from "./main";
 import axios from "axios";
+import { Toaster } from "react-hot-toast";
 const App = () => {
   const { setUser, isAuthenticated, setIsAuthenticated, user, setBlogs } =
     useContext(Context);
@@ -48,7 +49,7 @@ const App = () => {
     };
     fetchUser();
     fetchBlogs();
-  }, []);
+  }, [isAuthenticated]);
   return (
     <div>
       <Router>
@@ -65,6 +66,7 @@ const App = () => {
           <Route path="/blog/update/:id" element={<UpdateBlog />} />
         </Routes>
         <Footer />
+        <Toaster/>
       </Router>
     </div>
   );
