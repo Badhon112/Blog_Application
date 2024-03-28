@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { useContext } from "react";
+import { Context } from "../../main";
+import LatestBlog from "../miniComponents/LatestBlog";
 
 const Blogs = () => {
+  const { mode, blogs } = useContext(Context);
   return (
-    <div>Blogs</div>
-  )
-}
+    <article className={mode === "dark" ? "dark-bg" : "light-bg"}>
+      <LatestBlog blogs={blogs} title={"Blogs"}/>
+    </article>
+  );
+};
 
-export default Blogs
+export default Blogs;

@@ -31,7 +31,6 @@ const App = () => {
         setUser(data.user);
         setIsAuthenticated(true);
       } catch (error) {
-        console.log(error);
         setIsAuthenticated(false);
         setUser({});
       }
@@ -62,7 +61,7 @@ const App = () => {
           <Route path="/blog/:id" element={<SingleBlog />} />
           <Route path="/about" element={<About />} />
           <Route path="/authors" element={<AllAuthors />} />
-          <Route path="/deshboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/blog/update/:id" element={<UpdateBlog />} />
         </Routes>
         <Footer />

@@ -6,7 +6,7 @@ import { BeatLoader } from "react-spinners";
 const HeroSection = () => {
   const { blogs } = useContext(Context);
   return (
-    <section className="hero">
+    <section className="hero container">
       {blogs && blogs.length > 0 ? (
         blogs.slice(0, 2).map((element) => {
           return (

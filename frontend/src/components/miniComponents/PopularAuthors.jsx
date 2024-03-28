@@ -16,7 +16,7 @@ const PopularAuthors = () => {
     fetchUser();
   }, []);
   return (
-    <section className="popularAuthors">
+    <section className="popularAuthors grid grid-rows-2">
       <h3 className="text-3xl">Popular Authors</h3>
       <div className="container">
         {authors && authors.length > 0 ? (

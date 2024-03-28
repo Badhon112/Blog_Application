@@ -651,8 +651,8 @@ nav .btns .dark-mode {
   }
 }
 .popularAuthors {
-  min-width: 1500px;
-  max-width: 1500px;
+  min-width: 1000px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 25px 20px;
 }
